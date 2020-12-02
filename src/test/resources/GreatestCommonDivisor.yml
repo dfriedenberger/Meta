@@ -1,0 +1,72 @@
+modul:
+  models:
+    - name: globalA
+      type: number
+  functions:
+    - name: "Dummy"
+
+    - name: "main"
+      static: true
+      params: 
+        - name: args
+          type: string[]
+
+    - name: "GreatestCommonDivisor"
+      params: 
+        - name: a
+          type: number
+        - name: b
+          type: number
+      code: 
+        - variables:
+          - name: h
+            type: number
+        - if:
+            fn:
+              name: isZero
+              params: [ var: a ]
+          then:
+            - return:
+                fn:
+                  name: Abs
+                  params: [ var: b ]
+        - if:
+            fn:
+              name: isZero
+              params: [var: b]
+          then:
+            - return:
+                fn:
+                  name: Abs
+                  params: [ var: a ]
+        - do:
+            - assign:
+                var: h 
+                value: 
+                  fn:
+                    name: Mod
+                    params: [var: a , var: b]
+            - assign:
+                var: a 
+                value:
+                  var: b
+            - assign:
+                var: b 
+                value:
+                  var: h
+          while:
+            fn:
+              name: isNotZero
+              params: [ var: b]
+        - return:
+            fn:
+              name: Abs
+              params: [ var: a ]
+          
+tests:
+  - Fn::AssertIsTrue:
+    - Fn:isEquals:
+      - 3
+      - Fn::GreatestCommonDivisor: [ 6 , 9 ]
+   
+
