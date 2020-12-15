@@ -24,6 +24,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.ArrayAccessExpr;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
+import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.CastExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
@@ -32,17 +33,19 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.expr.UnaryExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.utils.StringEscapeUtils;
 
 import de.frittenburger.meta.interfaces.SimpleJavaToMetaConverter;
-import de.frittenburger.meta.model.Assign;
+import de.frittenburger.meta.model.AssignStatement;
 import de.frittenburger.meta.model.Code;
 import de.frittenburger.meta.model.MetaAlgorithm;
 import de.frittenburger.meta.model.MetaConst;
@@ -128,6 +131,10 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			return convertForStatement(statement.asForStmt());
 		}
+		if(statement.isWhileStmt())
+		{
+			return convertWhileStatement(statement.asWhileStmt());
+		}
 		if(statement.isIfStmt())
 		{
 			return convertIfStatement(statement.asIfStmt());
@@ -136,35 +143,44 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			return convertReturnStatement(statement.asReturnStmt());
 		}
-		System.err.println("Unknown "+statement.getClass().getSimpleName());
-		System.out.println(statement);
-		return null;
+		
+		throw new IllegalArgumentException("Unknown "+statement.getClass().getSimpleName()+ " " + statement);
 	}
 	
+	
+
 	private Code convertReturnStatement(ReturnStmt returnStmt) {
 		Code code = new Code();
 		
-		Optional<Expression> expr = returnStmt.getExpression();
-		if(expr.isPresent())
-			code.returnStatement = convertExpression(expr.get());
-		else
-			code.returnStatement = createVoidConst();
+//		Optional<Expression> expr = returnStmt.getExpression();
+//		if(expr.isPresent())
+//			code.returnStatement = convertExpression(expr.get());
+//		else
+//			code.returnStatement = createVoidConst();
 		return code;
 	}
 
 	private Code createVoidConst() {
 		Code code = new Code();
-		code.constStatement = new MetaConst();
-		code.constStatement.type = "void";
-		code.constStatement.value = "void";
+//		code.constStatement = new MetaConst();
+//		code.constStatement.type = "void";
+//		code.constStatement.value = "void";
 		return code;
 	}
 
 	private Code createClassConst(String name) {
 		Code code = new Code();
-		code.constStatement = new MetaConst();
-		code.constStatement.type = "class";
-		code.constStatement.value = name;
+//		code.constStatement = new MetaConst();
+//		code.constStatement.type = "class";
+//		code.constStatement.value = name;
+		return code;
+	}
+	
+	private Code createPropertyConst(String name) {
+		Code code = new Code();
+//		code.constStatement = new MetaConst();
+//		code.constStatement.type = "property";
+//		code.constStatement.value = name;
 		return code;
 	}
 	
@@ -193,55 +209,76 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		
 		Code code = new Code();
 		
-		code.forStatement = new ArrayList<>();
-		
-		NodeList<Expression> init = forStmt.getInitialization();
-		if(init.size() != 1)
-			throw new IllegalArgumentException("only exact one init statement allowed");
-		code.forStatement.add(convertExpression(init.get(0)));
-		
-		Optional<Expression> compare = forStmt.getCompare();
-		if(!compare.isPresent())
-			throw new IllegalArgumentException("only exact one update compare allowed");
-		code.forStatement.add(convertExpression(compare.get()));
-		
-		NodeList<Expression> update = forStmt.getUpdate();
-		if(update.size() != 1)
-			throw new IllegalArgumentException("only exact one update statement allowed");
-		code.forStatement.add(convertExpression(update.get(0)));
-		
-		
-		Statement doStatement = forStmt.getBody();
-		if(doStatement.isBlockStmt())
-		{
-			code.doStatement = convertBlockStatement(doStatement.asBlockStmt());
-		}
-		else
-		{
-			code.doStatement = new ArrayList<>();
-			code.doStatement.add(convertStatement(doStatement));
-		}
+//		//code.forStatement = new ArrayList<>();
+//		
+//		NodeList<Expression> init = forStmt.getInitialization();
+//		if(init.size() != 1)
+//			throw new IllegalArgumentException("only exact one init statement allowed");
+//		//code.forStatement.add(convertExpression(init.get(0)));
+//		
+//		Optional<Expression> compare = forStmt.getCompare();
+//		if(!compare.isPresent())
+//			throw new IllegalArgumentException("only exact one update compare allowed");
+//		//code.forStatement.add(convertExpression(compare.get()));
+//		
+//		NodeList<Expression> update = forStmt.getUpdate();
+//		if(update.size() != 1)
+//			throw new IllegalArgumentException("only exact one update statement allowed");
+//		//code.forStatement.add(convertExpression(update.get(0)));
+//		
+//		
+//		Statement doStatement = forStmt.getBody();
+//		if(doStatement.isBlockStmt())
+//		{
+//			code.doStatement = convertBlockStatement(doStatement.asBlockStmt());
+//		}
+//		else
+//		{
+//			code.doStatement = new ArrayList<>();
+//			code.doStatement.add(convertStatement(doStatement));
+//		}
 		
 		return code;
 	}
 
+	
+	private Code convertWhileStatement(WhileStmt whileStmt) {
+		
+		Code code = new Code();
+		
+//		code.whileStatement = convertExpression(whileStmt.getCondition());
+//
+//		Statement doStatement = whileStmt.getBody();
+//		if(doStatement.isBlockStmt())
+//		{
+//			code.doStatement = convertBlockStatement(doStatement.asBlockStmt());
+//		}
+//		else
+//		{
+//			code.doStatement = new ArrayList<>();
+//			code.doStatement.add(convertStatement(doStatement));
+//		}
+		
+		return code;
+	}
+	
 	private Code convertIfStatement(IfStmt ifStmt) {
 		
 		Code code = new Code();
 		
-		code.ifStatement = convertExpression(ifStmt.getCondition());
-		
-		Statement thenStatement = ifStmt.getThenStmt();
-		
-		if(thenStatement.isBlockStmt())
-		{
-			code.thenStatement = convertBlockStatement(thenStatement.asBlockStmt());
-		}
-		else
-		{
-			code.thenStatement = new ArrayList<>();
-			code.thenStatement.add(convertStatement(thenStatement));
-		}
+//		code.ifStatement = convertExpression(ifStmt.getCondition());
+//		
+//		Statement thenStatement = ifStmt.getThenStmt();
+//		
+//		if(thenStatement.isBlockStmt())
+//		{
+//			code.thenStatement = convertBlockStatement(thenStatement.asBlockStmt());
+//		}
+//		else
+//		{
+//			code.thenStatement = new ArrayList<>();
+//			code.thenStatement.add(convertStatement(thenStatement));
+//		}
 		return code;
 	}
 
@@ -254,18 +291,49 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			VariableDeclarationExpr declaration = expr.asVariableDeclarationExpr();
 			Code code = new Code();
-			code.variables = convertVariableDeclarationList(declaration.getVariables());
+			//code.variables = convertVariableDeclarationList(declaration.getVariables());
 			return code;
 		}
 		
 		if(expr.isAssignExpr())
 		{
 			AssignExpr a = expr.asAssignExpr();
-			Code code = new Code();
-			code.assignStatement = new Assign();
-			code.assignStatement.var = a.getTarget().asNameExpr().getNameAsString();
-			code.assignStatement.value = convertExpression(a.getValue());
-			return code;
+			
+			
+			Expression target = a.getTarget();
+			
+			if(target.isFieldAccessExpr())
+			{
+				FieldAccessExpr fieldexpr = target.asFieldAccessExpr();
+				//TODO: Setter
+				
+				Expression scope = fieldexpr.getScope();
+				if(!scope.isNameExpr())
+					throw new IllegalArgumentException("Unknown "+scope.getClass().getSimpleName()+" >>> "+scope);
+
+				Code code = new Code();
+//				code.assignStatement = new AssignStatement();
+//				code.assignStatement.var = scope.asNameExpr().getNameAsString()+ "." + fieldexpr.getNameAsString();
+//				code.assignStatement.value = convertExpression(a.getValue());
+				return code;
+				
+
+				
+				
+				
+			}
+			if(target.isNameExpr())
+			{
+				Code code = new Code();
+//				code.assignStatement = new AssignStatement();
+//				code.assignStatement.var = target.asNameExpr().getNameAsString();
+//				code.assignStatement.value = convertExpression(a.getValue());
+				return code;
+			}
+			
+			
+			throw new IllegalArgumentException("Unknown "+target.getClass().getSimpleName()+" >>> "+target);
+		
 		}
 		
 		if(expr.isMethodCallExpr())
@@ -273,31 +341,33 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 			MethodCallExpr call = expr.asMethodCallExpr();
 
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			switch(call.getNameAsString())
-			{
-				case "size":
-					code.fn.name = "Size";
-					break;
-				case "get":
-					code.fn.name = "Get";
-					break;
-				case "equals":
-					code.fn.name = "isEquals";
-					break;
-				default:
-					code.fn.name = call.getNameAsString();
-					break;
-			}
-			
-			code.fn.params = new ArrayList<>();
-			
-			Optional<Expression> scope = call.getScope();
-			if(scope.isPresent())
-			{
-				code.fn.params.add(convertExpression(scope.get()));
-			}
-			code.fn.params.addAll(convertExpressionList(call.getArguments()));
+//			code.fn = new MetaFunctionCall();
+//			switch(call.getNameAsString())
+//			{
+//				case "size":
+//					code.fn.name = "Size";
+//					break;
+//				case "get":
+//					code.fn.name = "Get";
+//				case "add":
+//					code.fn.name = "Add";
+//					break;
+//				case "equals":
+//					code.fn.name = "isEquals";
+//					break;
+//				default:
+//					code.fn.name = call.getNameAsString();
+//					break;
+//			}
+//			
+//			code.fn.params = new ArrayList<>();
+//			
+//			Optional<Expression> scope = call.getScope();
+//			if(scope.isPresent())
+//			{
+//				code.fn.params.add(convertExpression(scope.get()));
+//			}
+//			code.fn.params.addAll(convertExpressionList(call.getArguments()));
 			return code;
 
 		}
@@ -308,15 +378,15 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 			ObjectCreationExpr call = expr.asObjectCreationExpr();
 
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			code.fn.name = "New";
-			code.fn.params = new ArrayList<>();
-			
-			ClassOrInterfaceType clazz = call.getType();
-			
-			code.fn.params.add(createClassConst(clazz.getNameAsString()));
-			
-			code.fn.params.addAll(convertExpressionList(call.getArguments()));
+//			code.fn = new MetaFunctionCall();
+//			code.fn.name = "New";
+//			code.fn.params = new ArrayList<>();
+//			
+//			ClassOrInterfaceType clazz = call.getType();
+//			
+//			code.fn.params.add(createClassConst(clazz.getNameAsString()));
+//			
+//			code.fn.params.addAll(convertExpressionList(call.getArguments()));
 			return code;
 		}
 		
@@ -325,13 +395,13 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 			FieldAccessExpr call = expr.asFieldAccessExpr();
 
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			code.fn.name = "Get";
-			code.fn.params = new ArrayList<>();
-			
-			Expression scope = call.getScope();
-			code.fn.params.add(convertExpression(scope));
-			
+//			code.fn = new MetaFunctionCall();
+//			code.fn.name = "Get";
+//			code.fn.params = new ArrayList<>();
+//			
+//			Expression scope = call.getScope();
+//			code.fn.params.add(convertExpression(scope));
+//			
 			return code;
 		}
 		
@@ -340,11 +410,11 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 			ArrayAccessExpr call = expr.asArrayAccessExpr();
 
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			code.fn.name = "Get";
-			code.fn.params = new ArrayList<>();
-			code.fn.params.add(convertExpression(call.getName()));
-			code.fn.params.add(convertExpression(call.getIndex()));
+//			code.fn = new MetaFunctionCall();
+//			code.fn.name = "Get";
+//			code.fn.params = new ArrayList<>();
+//			code.fn.params.add(convertExpression(call.getName()));
+//			code.fn.params.add(convertExpression(call.getIndex()));
 
 			return code;
 		}
@@ -356,7 +426,7 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			NameExpr n = expr.asNameExpr();
 			Code code = new Code();
-			code.varStatement = n.getNameAsString();
+//			code.varStatement = n.getNameAsString();
 			return code;
 		}
 		
@@ -364,9 +434,9 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			StringLiteralExpr c = expr.asStringLiteralExpr();
 			Code code = new Code();
-			code.constStatement = new MetaConst();
-			code.constStatement.type = "string";
-			code.constStatement.value = StringEscapeUtils.unescapeJava(c.getValue());
+//			code.constStatement = new MetaConst();
+//			code.constStatement.type = "string";
+//			code.constStatement.value = StringEscapeUtils.unescapeJava(c.getValue());
 			return code;
 		}
 		
@@ -374,9 +444,19 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		{
 			IntegerLiteralExpr c = expr.asIntegerLiteralExpr();
 			Code code = new Code();
-			code.constStatement = new MetaConst();
-			code.constStatement.type = "number";
-			code.constStatement.value = c.getValue();
+//			code.constStatement = new MetaConst();
+//			code.constStatement.type = "number";
+//			code.constStatement.value = c.getValue();
+			return code;
+		}
+		
+		if(expr.isBooleanLiteralExpr())
+		{
+			BooleanLiteralExpr c = expr.asBooleanLiteralExpr();
+			Code code = new Code();
+//			code.constStatement = new MetaConst();
+//			code.constStatement.type = "boolean";
+//			code.constStatement.value = c.getValue()?"true":"false";
 			return code;
 		}
 		
@@ -385,58 +465,58 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 			BinaryExpr b = expr.asBinaryExpr();
 			
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			switch(b.getOperator())
-			{
-				case LESS:
-					code.fn.name = "isLessThen";
-					break;
-				case LESS_EQUALS:
-					code.fn.name = "isLessEqualsThen";
-					break;
-				case PLUS:
-					code.fn.name = "Add";
-					break;
-				case MINUS:
-					code.fn.name = "Sub";
-					break;
-				case MULTIPLY:
-					code.fn.name = "Mul";
-					break;
-				case AND:
-					code.fn.name = "And";
-					break;
-				case EQUALS:
-					code.fn.name = "isEquals";
-					break;
-				default:
-					code.fn.name = b.getOperator().toString();
-					break;
-			}
-			
-			code.fn.params = new ArrayList<>();
-			
-			code.fn.params.add(convertExpression(b.getLeft()));
-			code.fn.params.add(convertExpression(b.getRight()));
+//			code.fn = new MetaFunctionCall();
+//			switch(b.getOperator())
+//			{
+//				case LESS:
+//					code.fn.name = "isLessThen";
+//					break;
+//				case LESS_EQUALS:
+//					code.fn.name = "isLessEqualsThen";
+//					break;
+//				case PLUS:
+//					code.fn.name = "Add";
+//					break;
+//				case MINUS:
+//					code.fn.name = "Sub";
+//					break;
+//				case MULTIPLY:
+//					code.fn.name = "Mul";
+//					break;
+//				case AND:
+//					code.fn.name = "And";
+//					break;
+//				case EQUALS:
+//					code.fn.name = "isEquals";
+//					break;
+//				default:
+//					code.fn.name = b.getOperator().toString();
+//					break;
+//			}
+//			
+//			code.fn.params = new ArrayList<>();
+//			
+//			code.fn.params.add(convertExpression(b.getLeft()));
+//			code.fn.params.add(convertExpression(b.getRight()));
 			return code;
 			
 		}
 		
-		/*
+		
 		if(expr.isUnaryExpr())
 		{
 			UnaryExpr u = expr.asUnaryExpr();
 			
 			Code code = new Code();
-			code.fn = new MetaFunctionCall();
-			code.fn.name = u.getOperator().toString();
-			code.fn.params = new ArrayList<>();
-			
-			code.fn.params.add(convertExpression(u.getExpression()));
+//			code.fn = new MetaFunctionCall();
+//			code.fn.name = u.getOperator().toString();
+//			code.fn.params = new ArrayList<>();
+//			
+//			code.fn.params.add(convertExpression(u.getExpression()));
 			return code;
 			
 		}
-		*/
+		
 		if(expr.isCastExpr())
 		{
 			CastExpr n = expr.asCastExpr();

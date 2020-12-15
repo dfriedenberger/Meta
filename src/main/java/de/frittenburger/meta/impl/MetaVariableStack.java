@@ -22,4 +22,17 @@ public class MetaVariableStack {
 		return variables.get(name);
 	}
 
+	
+	public void pushLayer() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void popLayer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
 }

@@ -1,0 +1,11 @@
+loop:
+  while:
+    fn:
+      name: isTest
+  do:
+    - assign: 
+        ref: a
+        value: 
+          ref: b
+
+

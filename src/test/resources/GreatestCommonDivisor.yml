@@ -1,68 +1,79 @@
 modul:
-  models:
-    - name: globalA
-      type: number
   functions:
-    - name: "Dummy"
-
-    - name: "main"
-      static: true
-      params: 
-        - name: args
-          type: string[]
-
     - name: "GreatestCommonDivisor"
       params: 
         - name: a
           type: number
         - name: b
           type: number
-      code: 
-        - variables:
+      result:
+        name: r
+        type: number
+        value: 
+          const:
+            type: number
+            value: -1
+      variables:
           - name: h
             type: number
-        - if:
-            fn:
-              name: isZero
-              params: [ var: a ]
-          then:
-            - return:
-                fn:
-                  name: Abs
-                  params: [ var: b ]
-        - if:
-            fn:
-              name: isZero
-              params: [var: b]
-          then:
-            - return:
-                fn:
-                  name: Abs
-                  params: [ var: a ]
-        - do:
-            - assign:
-                var: h 
-                value: 
-                  fn:
-                    name: Mod
-                    params: [var: a , var: b]
-            - assign:
-                var: a 
-                value:
-                  var: b
-            - assign:
-                var: b 
-                value:
-                  var: h
-          while:
-            fn:
-              name: isNotZero
-              params: [ var: b]
-        - return:
-            fn:
-              name: Abs
-              params: [ var: a ]
-          
+            value: 
+              const:
+                type: number
+                value: -1
+      code: 
+        - conditional:
+            if:
+              fn:
+                name: isZero
+                params: [ ref: a ]
+            then:
+              - assign:
+                  ref: r
+                  value:
+                    fn:
+                      name: Abs
+                      params: [ ref: b ]
+            else:
+              - conditional:
+                  if:
+                    fn:
+                      name: isZero
+                      params: [ref: b]
+                  then:
+                    - assign:
+                        ref: r
+                        value:
+                          fn:
+                            name: Abs
+                            params: [ ref: a ]
+                  else:
+                    - loop:
+                        while:
+                          fn:
+                            name: isNotZero
+                            params: [ ref: b]
+                        do:
+                          - assign:
+                              ref: h 
+                              value: 
+                                fn:
+                                  name: Mod
+                                  params: [ref: a , ref: b]
+                          - assign:
+                              ref: a 
+                              value:
+                                ref: b
+                          - assign:
+                              ref: b 
+                              value:
+                                ref: h
+                    - assign:
+                        ref: r
+                        value:
+                          fn:
+                            name: Abs
+                            params: [ ref: a ]
+
 tests:
   - Fn::AssertIsTrue:
     - Fn:isEquals:

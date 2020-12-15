@@ -19,54 +19,47 @@ import de.frittenburger.meta.model.MetaRuntime;
 public class TestSimpleJavaConverter {
 
 	
+	public void testAdventOfCode(String filename) throws IOException {
 	
+		
+		SimpleJavaToMetaConverter converter = new SimpleJavaToMetaConverterImpl();
+		
+		MetaAlgorithm algorithm = converter.convert(new File(filename));
+		
+		
+		System.out.print(
+				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
+		
+		MetaRuntime runtime = new MetaRuntime();
+		runtime.setAlgorithm(algorithm);
+		runtime.setVariableStack(new MetaVariableStack());
+
+		
+		//execute
+		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
+		processor.run(runtime, "main", Arrays.asList(new MetaValue[] {new MetaValue("null")}));
+		
+	}
 	
 	
 	@Test
 	public void testReportRepair() throws IOException {
-	
-		
-		SimpleJavaToMetaConverter converter = new SimpleJavaToMetaConverterImpl();
-		
-		MetaAlgorithm algorithm = converter.convert(new File("src/main/java/de/frittenburger/aoc2020/day01/ReportRepair.java"));
-		
-		
-		System.out.print(
-				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
-		
-		MetaRuntime runtime = new MetaRuntime();
-		runtime.setAlgorithm(algorithm);
-		runtime.setVariableStack(new MetaVariableStack());
-
-		
-		//execute
-		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
-		processor.run(runtime, "main", Arrays.asList(new MetaValue[] {new MetaValue("null")}));
+				
+		testAdventOfCode("src/main/java/de/frittenburger/aoc2020/day01/ReportRepair.java");
 		
 	}
-	
 	
 	@Test
 	public void testPasswordPhilosophy() throws IOException {
-	
-		
-		SimpleJavaToMetaConverter converter = new SimpleJavaToMetaConverterImpl();
-		
-		MetaAlgorithm algorithm = converter.convert(new File("src/main/java/de/frittenburger/aoc2020/day02/PasswordPhilosophy.java"));
-		
-		
-		System.out.print(
-				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
-		
-		MetaRuntime runtime = new MetaRuntime();
-		runtime.setAlgorithm(algorithm);
-		runtime.setVariableStack(new MetaVariableStack());
-
-		
-		//execute
-		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
-		processor.run(runtime, "main", Arrays.asList(new MetaValue[] {new MetaValue("null")}));
+				
+		testAdventOfCode("src/main/java/de/frittenburger/aoc2020/day02/PasswordPhilosophy.java");
 		
 	}
-
+	
+	@Test
+	public void testHandheldHalting() throws IOException {
+				
+		testAdventOfCode("src/main/java/de/frittenburger/aoc2020/day08/HandheldHalting.java");
+		
+	}
 }

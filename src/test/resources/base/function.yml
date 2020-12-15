@@ -1,0 +1,27 @@
+name: "TestFunction"
+params: 
+  - name: a
+    type: number
+  - name: b
+    type: number
+variables:
+  - name: h
+    type: number
+    value:
+      const:
+        type: number
+        value: 0
+result:
+    name: r
+    type: number
+    value: 
+      const:
+        type: number
+        value: 0
+code: 
+  - assign:
+      ref: h 
+      value: 
+        fn:
+          name: Mod
+          params: [ref: a , ref: b]

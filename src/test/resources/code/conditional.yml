@@ -1,0 +1,15 @@
+conditional:
+  if:
+    fn:
+      name: isTest
+  then:
+    - assign: 
+        ref: a
+        value: 
+          ref: b
+  else:
+    - assign: 
+        ref: a
+        value: 
+          ref: b
+

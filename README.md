@@ -15,7 +15,7 @@ Status: Proof of Concept
 - Eligible for certification
 -- Improving Code Consistency
 -- Automated Unit-Tests Generation from Input classes
-
+-- Automatic Generation of Digital Twin for Simulation (for Arduino)
 # Example (Advent Of Code - Day 1)
 
 Beispiel für das Redundante ausführen von Add

@@ -18,6 +18,29 @@ import de.frittenburger.meta.model.MetaRuntime;
 public class TestMetaAlgorithmProcessor {
 
 	@Test
+	public void testHello() throws IOException {
+
+		ClassLoader cl = this.getClass().getClassLoader();
+		MetaAlgorithmLoader loader = new MetaAlgorithmLoaderImpl();
+		MetaAlgorithm algorithm = loader.load(cl.getResourceAsStream("Hello.yml"));
+
+		System.out.print(
+				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
+
+		MetaRuntime runtime = new MetaRuntime();
+		runtime.setAlgorithm(algorithm);
+		runtime.setVariableStack(new MetaVariableStack());
+
+		
+		//execute
+		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
+
+		assertEquals(0,processor.run(runtime, "main", Arrays.asList(new MetaValue[] {new MetaValue("null")})).getLong());
+		
+	}
+	
+
+	@Test
 	public void testGreatestCommonDivisor() throws IOException {
 
 		ClassLoader cl = this.getClass().getClassLoader();
@@ -41,33 +64,6 @@ public class TestMetaAlgorithmProcessor {
 		assertEquals(5, processor.run(runtime, "GreatestCommonDivisor", Arrays.asList(new MetaValue[] {new MetaValue(0), new MetaValue(5)})).getLong());
 		assertEquals(4, processor.run(runtime, "GreatestCommonDivisor", Arrays.asList(new MetaValue[] {new MetaValue(4), new MetaValue(0)})).getLong());
 		
-	}
-	
-	
-	@Test
-	public void testChronalCalibration() throws IOException {
-		
-		ClassLoader cl = this.getClass().getClassLoader();
-		MetaAlgorithmLoader loader = new MetaAlgorithmLoaderImpl();
-		MetaAlgorithm algorithm = loader.load(cl.getResourceAsStream("ChronalCalibration.yml"));
-
-		//Todo code to algorithm converter
-	
-		
-		
-		System.out.print(
-				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
-
-		MetaRuntime runtime = new MetaRuntime();
-		runtime.setAlgorithm(algorithm);
-		runtime.setVariableStack(new MetaVariableStack());
-
-		
-		//execute
-		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
-		processor.run(runtime, "main", Arrays.asList(new MetaValue[] {new MetaValue("null")}));
-
-	
 	}
 
 }

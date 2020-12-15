@@ -14,4 +14,7 @@ public class MetaVariable {
 	@JsonInclude(Include.NON_NULL)
 	public MetaVariable items;
 	
+	@JsonInclude(Include.NON_NULL)
+	public MetaExpression value;
+	
 }

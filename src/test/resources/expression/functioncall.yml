@@ -1,0 +1,4 @@
+
+fn:
+  name: isZero
+  params: [ ref: a ]

@@ -7,16 +7,8 @@ public class MetaValue {
 	private Long longValue = null;
 	private Boolean booleanValue = null;
 	private String stringValue = null;
-	private List<? extends Object> stringList;
+	private List<MetaValue> list;
 
-	public MetaValue(Object object) {
-		if(object instanceof Long)
-			this.longValue = Long.class.cast(object);
-		else if(object instanceof String)
-			this.stringValue = String.class.cast(object);
-		else
-			throw new IllegalArgumentException("Unknown class "+object.getClass().getSimpleName());
-	}
 
 	public MetaValue(Boolean booleanValue) {
 		this.booleanValue = booleanValue;
@@ -26,8 +18,8 @@ public class MetaValue {
 		this.stringValue = stringValue;
 	}
 
-	public MetaValue(List<? extends Object> stringList) {
-		this.stringList = stringList;
+	public MetaValue(List<MetaValue> list) {
+		this.list = list;
 	}
 
 	
@@ -56,13 +48,10 @@ public class MetaValue {
 		return stringValue;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> List<T> getList(Class<T> class1) {
-		return (List<T>) stringList;
-	}
 
-	public List<? extends Object> getList() {
-		return stringList;
+
+	public List<MetaValue> getList() {
+		return list;
 	}
 
 	@Override
@@ -70,7 +59,7 @@ public class MetaValue {
 		
 		if(longValue != null) return ""+longValue;
 		if(booleanValue != null) return ""+booleanValue;
-		if(stringList != null) return ""+stringList;
+		if(list != null) return ""+list;
 		if(stringValue != null) return stringValue;
 
 		return "null";
@@ -78,6 +67,10 @@ public class MetaValue {
 
 	public boolean isString() {
 		return stringValue != null;
+	}
+
+	public boolean isList() {
+		return list != null;
 	}
 	
 	

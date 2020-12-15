@@ -15,12 +15,12 @@ public class MetaFunction {
 	public boolean staticProperty;
 	
 	public List<MetaVariable> params;
+	public List<MetaVariable> variables;
+	
+	public MetaVariable result;
+
 	public List<Code> code;
 	
-	@Override
-	public String toString() {
-		return "MetaFunction [name=" + name + ", params=" + params + ", code=" + code + "]";
-	}
 	
 	
 }
