@@ -1,0 +1,17 @@
+name: "TestModel"
+type: object
+properties:
+  - name: name
+    type: string
+  - name: status
+    type: enum
+  - name: output
+    type: object
+    properties:
+      - name: size
+        type: integer
+  - name: errors
+    type: array
+    items: 
+      type: string
+value: null

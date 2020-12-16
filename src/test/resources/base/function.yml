@@ -7,17 +7,11 @@ params:
 variables:
   - name: h
     type: number
-    value:
-      const:
-        type: number
-        value: 0
+    value: 0
 result:
     name: r
     type: number
-    value: 
-      const:
-        type: number
-        value: 0
+    value: 0
 code: 
   - assign:
       ref: h 

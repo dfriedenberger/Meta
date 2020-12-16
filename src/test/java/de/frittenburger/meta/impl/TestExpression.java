@@ -14,7 +14,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.frittenburger.meta.interfaces.MetaBuiltInFunctionCallProcessor;
 import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionCallProcessor;
-import de.frittenburger.meta.interfaces.MetaFunctionConstProcessor;
+import de.frittenburger.meta.interfaces.MetaReferenceProcessor;
+import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.model.MetaExpression;
 import de.frittenburger.meta.model.MetaRuntime;
 
@@ -57,7 +58,7 @@ public class TestExpression {
 		when(runtime.getVariableStack()).thenReturn(stack);		
 		
 		when(stack.getValue("a")).thenReturn(new MetaValue(4711));
-		MetaFunctionReferenceProcessor referenceProcessor = new MetaFunctionReferenceProcessorImpl();
+		MetaReferenceProcessor referenceProcessor = new MetaReferenceProcessorImpl();
 		
 		MetaValue value = referenceProcessor.process(runtime,expression.ref);
 		
@@ -77,9 +78,9 @@ public class TestExpression {
 		
 		
 
-		MetaFunctionConstProcessor constProcessor = new MetaFunctionConstProcessorImpl();
+		MetaConstProcessor constProcessor = new MetaConstProcessorImpl();
 		
-		MetaValue value = constProcessor.process(expression.constStatement);
+		MetaValue value = constProcessor.process(expression.constStatement.type,expression.constStatement.value);
 		
 		
 		assertNotNull(value);

@@ -1,0 +1,42 @@
+modul:
+  models:
+    - name: "TestModel"
+      type: list
+      items:
+        type: string
+
+  functions:
+    - name: "TestFunction"
+      params: 
+        - name: args
+          type: string[]
+      result:
+        name: r
+        type: number
+        value: 
+          const:
+            type: number
+            value: -1
+      code:
+        - assign:
+            ref: r 
+            value:
+              const:
+                type: number
+                value: 0
+
+tests:
+  - fn:
+      name: isEquals
+      params:
+        - const: 
+            type: number
+            value: 0
+        - fn:
+            name: TestFunction
+            params:
+            - const: 
+                  type: list
+                  items: 
+                    type: string
+                  value: "test"

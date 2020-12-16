@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.frittenburger.meta.interfaces.MetaBuiltInFunctionCallProcessor;
-import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
 import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionCallProcessor;
 import de.frittenburger.meta.model.MetaExpression;
@@ -34,14 +33,10 @@ public class MetaFunctionCallProcessorImpl implements MetaFunctionCallProcessor 
 		}
 		
 		//call function fn.name
-		if(fn.scope == null) 
-		{
-			//Built-in Functions (Add, Mod, ...) 
-			return metaBuiltInFunctionCallProcessor.call(fn.name,values);
-		}
+		//TODO is function defined
+		//Built-in Functions (Add, Mod, ...) 
+		return metaBuiltInFunctionCallProcessor.call(fn.name,values);
 		
-		//object function , class function function 
-		throw new RuntimeException("scoped function not implemented");
 	}
 
 }

@@ -3,7 +3,8 @@ package de.frittenburger.meta.impl;
 import de.frittenburger.meta.interfaces.MetaBuiltInFunctionCallProcessor;
 import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionCallProcessor;
-import de.frittenburger.meta.interfaces.MetaFunctionConstProcessor;
+import de.frittenburger.meta.interfaces.MetaReferenceProcessor;
+import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.model.MetaExpression;
 import de.frittenburger.meta.model.MetaRuntime;
 
@@ -12,14 +13,15 @@ public class MetaExpressionProcessorImpl implements MetaExpressionProcessor {
 	
 	
 	private final MetaFunctionCallProcessor functionCallProcessor;
-	private final MetaFunctionReferenceProcessor referenceProcessor;
-	private final MetaFunctionConstProcessor constProcessor;
+	private final MetaReferenceProcessor referenceProcessor;
+	private final MetaConstProcessor constProcessor;
 	
-	public MetaExpressionProcessorImpl(MetaBuiltInFunctionCallProcessor builtInFunctionCallProcessor)
+	public MetaExpressionProcessorImpl(MetaBuiltInFunctionCallProcessor builtInFunctionCallProcessor,
+			MetaReferenceProcessor referenceProcessor,MetaConstProcessor constProcessor)
 	{
-		functionCallProcessor = new MetaFunctionCallProcessorImpl(this,builtInFunctionCallProcessor);
-		referenceProcessor = new MetaFunctionReferenceProcessorImpl();
-		constProcessor = new MetaFunctionConstProcessorImpl();
+		this.functionCallProcessor = new MetaFunctionCallProcessorImpl(this,builtInFunctionCallProcessor);
+		this.referenceProcessor = referenceProcessor;
+		this.constProcessor = constProcessor;
 	}
 	
 	@Override
@@ -32,7 +34,7 @@ public class MetaExpressionProcessorImpl implements MetaExpressionProcessor {
 			return referenceProcessor.process(runtime, expression.ref);
 		
 		if(expression.constStatement != null)
-			return constProcessor.process(expression.constStatement);
+			return constProcessor.process(expression.constStatement.type,expression.constStatement.value);
 		
 		throw new RuntimeException("not implemented");
 		

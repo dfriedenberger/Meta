@@ -13,10 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
-import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
+import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionProcessor;
 import de.frittenburger.meta.model.Code;
-import de.frittenburger.meta.model.MetaExpression;
 import de.frittenburger.meta.model.MetaFunction;
 import de.frittenburger.meta.model.MetaRuntime;
 import de.frittenburger.meta.model.MetaVariable;
@@ -41,14 +40,14 @@ public class TestBase {
 		
 
 		MetaCodeBlockProcessor blockProcessor = mock(MetaCodeBlockProcessor.class);
-		MetaExpressionProcessor expressionProcessor = mock(MetaExpressionProcessor.class);
+		MetaConstProcessor constProcessor = mock(MetaConstProcessor.class);
 		MetaRuntime runtime = mock(MetaRuntime.class);
 		MetaVariableStack stack = mock(MetaVariableStack.class);
 		
 		when(runtime.getVariableStack()).thenReturn(stack);
-		when(expressionProcessor.process(eq(runtime), any(MetaExpression.class))).thenReturn(new MetaValue(0));
+		when(constProcessor.process(any(String.class),any(String.class))).thenReturn(new MetaValue(0));
 		
-		MetaFunctionProcessor functionProcessor = new MetaFunctionProcessorImpl(expressionProcessor,blockProcessor);
+		MetaFunctionProcessor functionProcessor = new MetaFunctionProcessorImpl(constProcessor,blockProcessor);
 		
 		List<MetaValue> expressions = new ArrayList<>();
 		
@@ -57,7 +56,7 @@ public class TestBase {
 
 		functionProcessor.process(runtime,function,expressions);
 		
-		verify(expressionProcessor,times(2)).process(eq(runtime), any(MetaExpression.class));
+		verify(constProcessor,times(2)).process(any(String.class),any(String.class));
 		verify(blockProcessor,times(1)).process(eq(runtime), Mockito.<Code>anyList()); 
 		verify(stack,times(4)).setVariable(any(String.class), any(MetaValue.class));
 		verify(stack,times(4)).createVariable(any(MetaVariable.class));
@@ -65,6 +64,22 @@ public class TestBase {
 	}
 
 	
+	@Test
+	public void testModel() throws IOException {
+		
+		ClassLoader cl = this.getClass().getClassLoader();
+		
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		MetaVariable variable = mapper.readValue(cl.getResourceAsStream("base/model.yml"),MetaVariable.class);
+		
+		
+		MetaConstProcessor constProcessor = new MetaConstProcessorImpl();
+		
+		MetaVariableStack stack = new MetaVariableStack();
+		stack.createVariable(variable);
+		MetaValue value = constProcessor.process(variable.type,variable.value);
+		stack.setVariable(variable.name,value);
 	
+	}
 
 }

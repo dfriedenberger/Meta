@@ -3,7 +3,7 @@ package de.frittenburger.meta.impl;
 import java.util.List;
 
 import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
-import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
+import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionProcessor;
 import de.frittenburger.meta.model.MetaFunction;
 import de.frittenburger.meta.model.MetaRuntime;
@@ -11,12 +11,12 @@ import de.frittenburger.meta.model.MetaVariable;
 
 public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 
-	private MetaExpressionProcessor expressionProcessor;
+	private MetaConstProcessor constProcessor;
 	private MetaCodeBlockProcessor codeBlockProcessor;
 
-	public MetaFunctionProcessorImpl(MetaExpressionProcessor expressionProcessor,MetaCodeBlockProcessor codeBlockProcessor)
+	public MetaFunctionProcessorImpl(MetaConstProcessor constProcessor,MetaCodeBlockProcessor codeBlockProcessor)
 	{
-		this.expressionProcessor = expressionProcessor;
+		this.constProcessor = constProcessor;
 		this.codeBlockProcessor = codeBlockProcessor;
 	}
 
@@ -39,7 +39,7 @@ public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 		
 		//result	
 		stack.createVariable(function.result);
-		MetaValue defaultValue = expressionProcessor.process(runtime, function.result.value);
+		MetaValue defaultValue = constProcessor.process(function.result.type,function.result.value);
 		stack.setVariable(function.result.name,defaultValue);
 		
 		
@@ -51,7 +51,7 @@ public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 			{
 				MetaVariable var = function.variables.get(i);
 				stack.createVariable(var);
-				MetaValue value = expressionProcessor.process(runtime, function.variables.get(i).value);
+				MetaValue value = constProcessor.process(var.type,var.value);
 				stack.setVariable(var.name,value);
 			}
 		

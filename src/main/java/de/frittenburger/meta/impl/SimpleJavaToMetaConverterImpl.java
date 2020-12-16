@@ -51,7 +51,6 @@ import de.frittenburger.meta.model.MetaAlgorithm;
 import de.frittenburger.meta.model.MetaConst;
 import de.frittenburger.meta.model.MetaFunction;
 import de.frittenburger.meta.model.MetaFunctionCall;
-import de.frittenburger.meta.model.MetaModel;
 import de.frittenburger.meta.model.MetaModul;
 import de.frittenburger.meta.model.MetaVariable;
 
@@ -107,7 +106,7 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 
 		MetaFunction function = new MetaFunction();
 		function.name = declaration.getNameAsString();
-		function.staticProperty = declaration.isStatic();
+		//function.staticProperty = declaration.isStatic();
 		function.params = new ArrayList<>();
 		if(!declaration.isStatic())
 		{
@@ -600,8 +599,8 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		return var;
 	}
 
-	private List<MetaModel> convertFieldDeclarationList(List<FieldDeclaration> declarations) {
-		List<MetaModel> models = new ArrayList<>();
+	private List<MetaVariable> convertFieldDeclarationList(List<FieldDeclaration> declarations) {
+		List<MetaVariable> models = new ArrayList<>();
 		for(FieldDeclaration declaration : declarations)
 		{
 			System.out.println("Not implemented: "+declaration);

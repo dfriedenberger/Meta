@@ -18,8 +18,11 @@ import de.frittenburger.meta.interfaces.MetaAlgorithmLoader;
 import de.frittenburger.meta.interfaces.MetaAlgorithmProcessor;
 import de.frittenburger.meta.interfaces.MetaBuiltInFunctionCallProcessor;
 import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
+import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.interfaces.MetaExpressionProcessor;
+import de.frittenburger.meta.interfaces.MetaFunctionCallProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionProcessor;
+import de.frittenburger.meta.interfaces.MetaReferenceProcessor;
 import de.frittenburger.meta.model.Code;
 import de.frittenburger.meta.model.InterruptFunctionExeption;
 import de.frittenburger.meta.model.MetaAlgorithm;
@@ -31,10 +34,16 @@ import de.frittenburger.meta.model.MetaVariable;
 public class MetaAlgorithmProcessorImpl implements MetaAlgorithmProcessor {
 
 	
+	
 	private final MetaBuiltInFunctionCallProcessor builtInFunctionCallProcessor = new MetaBuiltInFunctionCallProcessorImpl();
-	private final MetaExpressionProcessor expressionProcessor = new MetaExpressionProcessorImpl(builtInFunctionCallProcessor);
+
+	private final MetaReferenceProcessor referenceProcessor = new MetaReferenceProcessorImpl();
+	private final MetaConstProcessor constProcessor = new MetaConstProcessorImpl();
+	
+	
+	private final MetaExpressionProcessor expressionProcessor = new MetaExpressionProcessorImpl(builtInFunctionCallProcessor,referenceProcessor,constProcessor);
 	private final MetaCodeBlockProcessor blockProcessor = new MetaCodeBlockProcessorImpl(expressionProcessor);
-	private final MetaFunctionProcessor functionProcessor = new MetaFunctionProcessorImpl(expressionProcessor,blockProcessor);
+	private final MetaFunctionProcessor functionProcessor = new MetaFunctionProcessorImpl(constProcessor,blockProcessor);
 
 	
 	@Override
