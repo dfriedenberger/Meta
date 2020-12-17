@@ -51,6 +51,7 @@ import de.frittenburger.meta.model.MetaAlgorithm;
 import de.frittenburger.meta.model.MetaConst;
 import de.frittenburger.meta.model.MetaFunction;
 import de.frittenburger.meta.model.MetaFunctionCall;
+import de.frittenburger.meta.model.MetaModel;
 import de.frittenburger.meta.model.MetaModul;
 import de.frittenburger.meta.model.MetaVariable;
 
@@ -583,12 +584,12 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		case "int[]":
 	
 			var.type = "list";
-			var.items = createVariable(null,"int");
+			//var.items = createVariable(null,"int");
 			break;
 		case "String[]":
 		case "List<String>":
 			var.type = "list";
-			var.items = createVariable(null,"String");
+			//var.items = createVariable(null,"String");
 			
 			break;
 		default:
@@ -599,8 +600,8 @@ public class SimpleJavaToMetaConverterImpl implements SimpleJavaToMetaConverter 
 		return var;
 	}
 
-	private List<MetaVariable> convertFieldDeclarationList(List<FieldDeclaration> declarations) {
-		List<MetaVariable> models = new ArrayList<>();
+	private List<MetaModel> convertFieldDeclarationList(List<FieldDeclaration> declarations) {
+		List<MetaModel> models = new ArrayList<>();
 		for(FieldDeclaration declaration : declarations)
 		{
 			System.out.println("Not implemented: "+declaration);

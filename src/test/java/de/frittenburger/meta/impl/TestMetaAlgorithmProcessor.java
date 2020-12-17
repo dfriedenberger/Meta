@@ -66,4 +66,29 @@ public class TestMetaAlgorithmProcessor {
 		
 	}
 
+	
+	
+	@Test
+	public void testBase() throws IOException {
+		
+		ClassLoader cl = this.getClass().getClassLoader();
+		MetaAlgorithmLoader loader = new MetaAlgorithmLoaderImpl();
+		MetaAlgorithm algorithm = loader.load(cl.getResourceAsStream("Base.yml"));
+
+		System.out.print(
+				new ObjectMapper(new YAMLFactory()).writerWithDefaultPrettyPrinter().writeValueAsString(algorithm));
+
+		MetaVariableStack stack = new MetaVariableStack();
+		MetaRuntime runtime = new MetaRuntime();
+		runtime.setAlgorithm(algorithm);
+		runtime.setVariableStack(stack);
+
+		
+		//execute
+		MetaAlgorithmProcessor processor = new MetaAlgorithmProcessorImpl();
+
+		assertEquals(0,processor.run(runtime, "TestFunction", Arrays.asList(new MetaValue[] {new MetaValue("Hello World")})).getLong());
+		
+		System.out.println(stack);
+	}
 }

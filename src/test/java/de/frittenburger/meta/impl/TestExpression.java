@@ -34,6 +34,9 @@ public class TestExpression {
 		
 		when(builtInFunctionCallProcessor.call(eq("isZero"),Mockito.<MetaValue>anyList())).thenReturn(new MetaValue(true));
 		
+		when(expressionProcessor.process(eq(null),any(MetaExpression.class))).thenReturn(new MetaValue(0));
+
+		
 		MetaFunctionCallProcessor functionCallProcessor = new MetaFunctionCallProcessorImpl(expressionProcessor,builtInFunctionCallProcessor);
 		
 		MetaValue value = functionCallProcessor.process(null,expression.fn);

@@ -5,15 +5,17 @@ import java.util.List;
 import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
 import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionProcessor;
+import de.frittenburger.meta.interfaces.ModelMapper;
 import de.frittenburger.meta.model.MetaFunction;
+import de.frittenburger.meta.model.MetaModel;
 import de.frittenburger.meta.model.MetaRuntime;
 import de.frittenburger.meta.model.MetaVariable;
 
 public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 
-	private MetaConstProcessor constProcessor;
-	private MetaCodeBlockProcessor codeBlockProcessor;
-
+	private final MetaConstProcessor constProcessor;
+	private final MetaCodeBlockProcessor codeBlockProcessor;
+	private final ModelMapper modelMapper = new ModelMapperImpl();
 	public MetaFunctionProcessorImpl(MetaConstProcessor constProcessor,MetaCodeBlockProcessor codeBlockProcessor)
 	{
 		this.constProcessor = constProcessor;
@@ -33,13 +35,15 @@ public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 		for(int i = 0;i < function.params.size();i++)
 		{
 			MetaVariable var = function.params.get(i);
-			stack.createVariable(var);
+			MetaModel model = modelMapper.getModel(runtime,var.type);
+			stack.createVariable(var.name,model);
 			stack.setVariable(var.name,values.get(i));
 		}
 		
 		//result	
-		stack.createVariable(function.result);
-		MetaValue defaultValue = constProcessor.process(function.result.type,function.result.value);
+		MetaModel resultModel = modelMapper.getModel(runtime,function.result.type);
+		stack.createVariable(function.result.name,resultModel);
+		MetaValue defaultValue = constProcessor.process(resultModel.type,function.result.value);
 		stack.setVariable(function.result.name,defaultValue);
 		
 		
@@ -50,8 +54,11 @@ public class MetaFunctionProcessorImpl implements MetaFunctionProcessor {
 			for(int i = 0;i < function.variables.size();i++)
 			{
 				MetaVariable var = function.variables.get(i);
-				stack.createVariable(var);
-				MetaValue value = constProcessor.process(var.type,var.value);
+				MetaModel model = modelMapper.getModel(runtime,var.type);
+
+				stack.createVariable(var.name,model);
+				
+				MetaValue value = constProcessor.process(model.type,var.value);
 				stack.setVariable(var.name,value);
 			}
 		

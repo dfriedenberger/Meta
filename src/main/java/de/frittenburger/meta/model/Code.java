@@ -18,4 +18,7 @@ public class Code  {
 	@JsonProperty("assign")
 	public AssignStatement assignStatement;
 	
+	@JsonInclude(Include.NON_NULL)
+	@JsonProperty("void")
+	public MetaExpression voidExpression;
 }

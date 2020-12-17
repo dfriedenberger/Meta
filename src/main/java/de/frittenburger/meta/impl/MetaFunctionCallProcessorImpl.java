@@ -29,6 +29,8 @@ public class MetaFunctionCallProcessorImpl implements MetaFunctionCallProcessor 
 		for(MetaExpression param : fn.params)
 		{
 			MetaValue value = expressionProcessor.process(runtime,param);
+			if(value == null)
+				throw new NullPointerException(param.toString());
 			values.add(value);
 		}
 		

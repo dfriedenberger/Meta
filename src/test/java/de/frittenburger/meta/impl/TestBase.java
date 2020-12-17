@@ -16,9 +16,11 @@ import de.frittenburger.meta.interfaces.MetaCodeBlockProcessor;
 import de.frittenburger.meta.interfaces.MetaConstProcessor;
 import de.frittenburger.meta.interfaces.MetaFunctionProcessor;
 import de.frittenburger.meta.model.Code;
+import de.frittenburger.meta.model.MetaAlgorithm;
 import de.frittenburger.meta.model.MetaFunction;
+import de.frittenburger.meta.model.MetaModel;
+import de.frittenburger.meta.model.MetaModul;
 import de.frittenburger.meta.model.MetaRuntime;
-import de.frittenburger.meta.model.MetaVariable;
 
 public class TestBase {
 
@@ -43,8 +45,11 @@ public class TestBase {
 		MetaConstProcessor constProcessor = mock(MetaConstProcessor.class);
 		MetaRuntime runtime = mock(MetaRuntime.class);
 		MetaVariableStack stack = mock(MetaVariableStack.class);
-		
+		MetaAlgorithm algorithm = mock(MetaAlgorithm.class);
+		algorithm.modul = new MetaModul();
+
 		when(runtime.getVariableStack()).thenReturn(stack);
+		when(runtime.getAlgorithm()).thenReturn(algorithm);
 		when(constProcessor.process(any(String.class),any(String.class))).thenReturn(new MetaValue(0));
 		
 		MetaFunctionProcessor functionProcessor = new MetaFunctionProcessorImpl(constProcessor,blockProcessor);
@@ -59,7 +64,7 @@ public class TestBase {
 		verify(constProcessor,times(2)).process(any(String.class),any(String.class));
 		verify(blockProcessor,times(1)).process(eq(runtime), Mockito.<Code>anyList()); 
 		verify(stack,times(4)).setVariable(any(String.class), any(MetaValue.class));
-		verify(stack,times(4)).createVariable(any(MetaVariable.class));
+		verify(stack,times(4)).createVariable(any(String.class),any(MetaModel.class));
 
 	}
 
@@ -70,15 +75,9 @@ public class TestBase {
 		ClassLoader cl = this.getClass().getClassLoader();
 		
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		MetaVariable variable = mapper.readValue(cl.getResourceAsStream("base/model.yml"),MetaVariable.class);
+		MetaModel model = mapper.readValue(cl.getResourceAsStream("base/model.yml"),MetaModel.class);
 		
-		
-		MetaConstProcessor constProcessor = new MetaConstProcessorImpl();
-		
-		MetaVariableStack stack = new MetaVariableStack();
-		stack.createVariable(variable);
-		MetaValue value = constProcessor.process(variable.type,variable.value);
-		stack.setVariable(variable.name,value);
+		assertNotNull(model);
 	
 	}
 

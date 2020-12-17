@@ -23,6 +23,11 @@ public class MetaBuiltInFunctionCallProcessorImpl implements MetaBuiltInFunction
 			case "PrintLine":
 				System.out.println("PrintLine: "+values);
 				return new MetaValue(0);
+			case "Get":
+				return values.get(0).getList().get((int) values.get(1).getLong());
+			case "Add":
+				values.get(0).getList().add(values.get(1));
+				return new MetaValue("void");
 			default:
 				throw new RuntimeException(name+" not implemented");
 		}

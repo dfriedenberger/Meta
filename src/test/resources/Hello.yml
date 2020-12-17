@@ -1,9 +1,14 @@
 modul:
+  models:
+    - name: StringList
+      type: list
+      items: 
+        type: string
   functions:
     - name: "main"
       params: 
         - name: args
-          type: string[]
+          type: StringList
       result:
         name: r
         type: number

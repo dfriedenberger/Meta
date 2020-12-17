@@ -6,7 +6,7 @@ public class MetaModul {
 
 	public String name;
 	
-	public List<MetaVariable> models;
+	public List<MetaModel> models;
 
 	public List<MetaFunction> functions;
 	

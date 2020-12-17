@@ -1,29 +1,48 @@
 modul:
   models:
-    - name: "TestModel"
+    - name: TestList
       type: list
       items:
         type: string
-
+    - name: TestObject
+      type: object
+      properties:
+        - name: lst
+          type: list
+          items:
+            type: string
   functions:
-    - name: "TestFunction"
+    - name: TestFunction
       params: 
         - name: args
-          type: string[]
+          type: TestList
       result:
         name: r
         type: number
-        value: 
-          const:
-            type: number
-            value: -1
+        value: -1
+      variables:
+        - name: obj
+          type: TestObject
+          value: new
       code:
+        - void:
+            fn:
+              name: Add
+              params: 
+                - ref: obj.lst
+                - const:
+                    type: number
+                    value: 0
         - assign:
             ref: r 
             value:
-              const:
-                type: number
-                value: 0
+              fn:
+                name: Get
+                params: 
+                  - ref: obj.lst
+                  - const:
+                      type: number
+                      value: 0
 
 tests:
   - fn:

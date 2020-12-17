@@ -12,14 +12,16 @@ import de.frittenburger.meta.model.MetaRuntime;
 
 public class MetaCodeBlockProcessorImpl implements MetaCodeBlockProcessor {
 
+	private final MetaExpressionProcessor expressionProcessor;
 	private final MetaCodeConditionalProcessor conditionalProcessor;
 	private final MetaCodeLoopProcessor loopProcessor;
 	private final MetaCodeAssignProcessor assignProcessor;
 
 	public MetaCodeBlockProcessorImpl(MetaExpressionProcessor expressionProcessor) {
-		conditionalProcessor = new MetaCodeConditionalProcessorImpl(expressionProcessor, this);
-		loopProcessor = new MetaCodeLoopProcessorImpl(expressionProcessor, this);
-		assignProcessor = new MetaCodeAssignProcessorImpl(expressionProcessor);
+		this.expressionProcessor = expressionProcessor;
+		this.conditionalProcessor = new MetaCodeConditionalProcessorImpl(expressionProcessor, this);
+		this.loopProcessor = new MetaCodeLoopProcessorImpl(expressionProcessor, this);
+		this.assignProcessor = new MetaCodeAssignProcessorImpl(expressionProcessor);
 	}
 
 	@Override
@@ -34,9 +36,14 @@ public class MetaCodeBlockProcessorImpl implements MetaCodeBlockProcessor {
 				conditionalProcessor.process(runtime, code.conditionalStatement);
 			else if(code.assignStatement != null)
 				assignProcessor.process(runtime, code.assignStatement);
+			else if(code.voidExpression != null)
+			{
+				MetaValue value = expressionProcessor.process(runtime, code.voidExpression);
+				if(!value.toString().equals("void"))
+					throw new RuntimeException("value has to be void "+value);
+			}
 			else 
 				throw new RuntimeException("not implemented");
-
 		}
 		
 		
