@@ -7,7 +7,7 @@
   <description>nothing more than a meta language</description>
   
   <properties>
-		<jackson.version>2.11.1</jackson.version>
+		<jackson.version>2.16.2</jackson.version>
 		<javaparser.version>3.17.0</javaparser.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
